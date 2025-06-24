@@ -24,8 +24,13 @@ spec:
       prune: true
       selfHeal: true
   ignoreDifferences:
-    - group: admissionregistration.k8s.io
-      kind: ValidatingWebhookConfiguration
-      name: istiod-default-validator
-      jqPathExpressions:
-        - .webhooks[]?.clientConfig.caBundle
+  - group: admissionregistration.k8s.io
+    kind: ValidatingAdmissionWebhookConfiguration
+    jqPathExpressions:
+    - '.webhooks[]?.clientConfig.caBundle'
+    - '.webhooks[]?.failurePolicy'
+  - group: admissionregistration.k8s.io
+    kind: MutatingAdmissionWebhookConfiguration
+    jqPathExpressions:
+    - '.webhooks[]?.clientConfig.caBundle'
+    - '.webhooks[]?.failurePolicy'
