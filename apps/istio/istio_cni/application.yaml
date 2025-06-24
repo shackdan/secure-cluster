@@ -1,0 +1,47 @@
+# New CNI application (deploy this first)
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: istio-cni
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  project: default
+  source:
+    repoURL: https://istio-release.storage.googleapis.com/charts
+    chart: cni
+    targetRevision: 1.26.2
+    helm:
+      values: |-
+        cni:
+          # Run CNI in non-privileged mode
+          chained: false
+          cniBinDir: /opt/cni/bin
+          cniConfDir: /etc/cni/net.d
+          excludeNamespaces:
+          - istio-system
+          - kube-system
+          - argocd
+          repair:
+            enabled: true
+          # Security configurations for restricted environments
+          seccompProfile:
+            type: RuntimeDefault
+        # Resource limits
+        resources:
+          requests:
+            cpu: 10m
+            memory: 64Mi
+          limits:
+            cpu: 100m
+            memory: 128Mi
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: istio-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true

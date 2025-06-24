@@ -1,10 +1,11 @@
+# Your existing istiod application (modified)
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: istio-istiod
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/sync-wave: "2"  # Changed from 1 to 2
 spec:
   project: default
   source:
@@ -16,6 +17,14 @@ spec:
         pilot:
           env:
             EXTERNAL_ISTIOD: false
+        # Configure istiod to work with CNI
+        global:
+          # Tell istiod that CNI is enabled
+          cni:
+            enabled: true
+        sidecarInjectorWebhook:
+          # Don't inject init containers when CNI is enabled
+          rewriteAppHTTPProbe: true
   destination:
     server: https://kubernetes.default.svc
     namespace: istio-system
