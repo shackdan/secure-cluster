@@ -1,0 +1,83 @@
+# istio-operator/istio-operator.yaml
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+metadata:
+  name: istio-control-plane
+  namespace: istio-system
+spec:
+  components:
+    # Enable CNI component
+    cni:
+      enabled: true
+      k8s:
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1001
+          runAsGroup: 1001
+          fsGroup: 1001
+          seccompProfile:
+            type: RuntimeDefault
+    pilot:
+      k8s:
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1001
+          runAsGroup: 1001
+          fsGroup: 1001
+          seccompProfile:
+            type: RuntimeDefault
+        env:
+        - name: EXTERNAL_ISTIOD
+          value: "false"
+        - name: PILOT_ENABLE_CNI
+          value: "true"
+  values:
+    # CNI configuration - this is critical
+    cni:
+      enabled: true
+      chained: false
+      excludeNamespaces:
+      - istio-system
+      - kube-system
+      - argocd
+      repair:
+        enabled: true
+        deletePods: true
+    # Configure sidecar injection for CNI
+    sidecarInjectorWebhook:
+      rewriteAppHTTPProbe: true
+      # This template ensures no init containers
+      templates:
+        sidecar: |
+          spec:
+            securityContext:
+              runAsNonRoot: true
+              runAsUser: 1001
+              runAsGroup: 1001
+              fsGroup: 1001
+              seccompProfile:
+                type: RuntimeDefault
+            containers:
+            - name: istio-proxy
+              securityContext:
+                allowPrivilegeEscalation: false
+                runAsNonRoot: true
+                runAsUser: 1001
+                runAsGroup: 1001
+                capabilities:
+                  drop:
+                  - ALL
+                seccompProfile:
+                  type: RuntimeDefault
+    # Global proxy settings
+    global:
+      proxy:
+        runAsRoot: false
+        runAsUser: 1001
+        runAsGroup: 1001
+        privileged: false
+      # Tell the mesh CNI is enabled
+      meshConfig:
+        defaultConfig:
+          proxyMetadata:
+            ISTIO_META_CNI_ENABLED: "true"

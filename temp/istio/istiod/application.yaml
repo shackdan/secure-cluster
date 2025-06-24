@@ -1,11 +1,10 @@
-# Your existing istiod application (modified)
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: istio-istiod
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "2"  # Changed from 1 to 2
+    argocd.argoproj.io/sync-wave: "2"
 spec:
   project: default
   source:
@@ -17,14 +16,40 @@ spec:
         pilot:
           env:
             EXTERNAL_ISTIOD: false
-        # Configure istiod to work with CNI
+            # Enable CNI mode
+            PILOT_ENABLE_CNI: true
+        # CRITICAL: This tells istiod that CNI is available
+        meshConfig:
+          defaultConfig:
+            # This is key - tells the proxy it's running with CNI
+            proxyMetadata:
+              ISTIO_META_CNI_ENABLED: "true"
+        # Global CNI configuration
         global:
-          # Tell istiod that CNI is enabled
+          # Tell the entire mesh CNI is enabled
           cni:
             enabled: true
+          # Configure mesh for CNI mode
+          meshConfig:
+            defaultConfig:
+              proxyMetadata:
+                ISTIO_META_CNI_ENABLED: "true"
+        # Sidecar injection configuration
         sidecarInjectorWebhook:
-          # Don't inject init containers when CNI is enabled
+          # Don't rewrite probes when using CNI
           rewriteAppHTTPProbe: true
+          # Enable CNI mode in injector
+          enableNamespacesByDefault: false
+          # Custom values for CNI injection
+          values:
+            global:
+              cni:
+                enabled: true
+        # Proxy configuration for security
+        proxy:
+          runAsRoot: false
+          runAsUser: 1001
+          runAsGroup: 1001
   destination:
     server: https://kubernetes.default.svc
     namespace: istio-system

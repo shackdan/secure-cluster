@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: helloworld
-  namespace: secure-apps
+  namespace: default  # or your target namespace
 spec:
   replicas: 1
   selector:
@@ -12,22 +12,45 @@ spec:
     metadata:
       labels:
         app: helloworld
+      annotations:
+        sidecar.istio.io/inject: "true"
+        # Explicitly specify no init containers should be injected
+        sidecar.istio.io/proxyCPU: "10m"
+        sidecar.istio.io/proxyMemory: "64Mi"
     spec:
       securityContext:
-        runAsNonRoot:  true
+        runAsNonRoot: true
         runAsUser: 1001
         runAsGroup: 1001
         fsGroup: 1001
         seccompProfile:
           type: RuntimeDefault
       containers:
-        - name: helloworld
-          image: docker.io/istio/examples-helloworld-v1  ### hashicorp/http-echo:0.2.3
-          args: ["-text", "hello from the mesh"]
-          ports:
-            - containerPort: 5678
-          securityContext:
-            runAsNonRoot: true
-            allowPrivilegeEscalation: false
-            seccompProfile:
-              type: RuntimeDefault
+      - name: helloworld
+        image: docker.io/istio/examples-helloworld-v1:latest
+        ports:
+        - containerPort: 5000
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 1001
+          runAsGroup: 1001
+          capabilities:
+            drop:
+            - ALL
+          seccompProfile:
+            type: RuntimeDefault
+          readOnlyRootFilesystem: true
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            cpu: 100m
+            memory: 64Mi
+      volumes:
+      - name: tmp
+        emptyDir: {}
