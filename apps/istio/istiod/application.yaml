@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://istio-release.storage.googleapis.com/charts
     chart: istiod
-    ##targetRevision: 1.26.2
+    targetRevision: 1.26.2
     helm:
       values: |-
         pilot:
