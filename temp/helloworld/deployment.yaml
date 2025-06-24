@@ -20,7 +20,7 @@ spec:
           ports:
             - containerPort: 5678
           securityContext:
-            runAsNonRoot: true
+            runAsNonRoot: false
             allowPrivilegeEscalation: false
             seccompProfile:
               type: RuntimeDefault
