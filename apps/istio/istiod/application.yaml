@@ -12,11 +12,8 @@ spec:
     chart: istiod
     targetRevision: 1.21.0
     helm:
-      values: |
-        meshConfig:
-          accessLogFile: /dev/stdout
-        global:
-          istioNamespace: istio-system
+      valueFiles:
+        - istio-values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: istio-system
