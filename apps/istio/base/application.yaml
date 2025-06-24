@@ -3,6 +3,8 @@ kind: Application
 metadata:
   name: istio-control-plane
   namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"  # For Istio base (CRDs)
 spec:
   project: default
   source:
