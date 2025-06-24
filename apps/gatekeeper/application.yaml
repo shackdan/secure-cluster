@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/your-org/secure-service-mesh.git
+    repoURL: git@github.com:shackdan/secure-cluster.git
     path: apps/gatekeeper
     directory:
       recurse: true

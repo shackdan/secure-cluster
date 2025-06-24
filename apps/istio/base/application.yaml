@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/your-org/secure-service-mesh.git
+    repoURL: git@github.com:shackdan/secure-cluster.git
     path: apps/istio/base
     helm:
       valueFiles:
@@ -18,5 +18,3 @@ spec:
     automated:
       prune: true
       selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
