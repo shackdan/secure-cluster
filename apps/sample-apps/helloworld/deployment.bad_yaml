@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: helloworld
-          image: hashicorp/http-echo:0.2.3
+          image: docker.io/istio/examples-helloworld-v1 ###hashicorp/http-echo:0.2.3
           args: ["-text", "hello from the mesh"]
           ports:
             - containerPort: 5678
