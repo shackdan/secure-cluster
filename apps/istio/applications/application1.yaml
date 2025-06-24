@@ -1,0 +1,23 @@
+# istio-config/applications/01-istio-operator-controller.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: istio-operator-controller
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  project: default
+  source:
+    repoURL: https://istio-release.storage.googleapis.com/charts
+    chart: istio-operator
+    targetRevision: 1.25.0
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: istio-operator
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
