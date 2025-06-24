@@ -1,0 +1,19 @@
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: istiomtlsrequired
+spec:
+  crd:
+    spec:
+      names:
+        kind: IstioMTLSRequired
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package istio.security.mtls
+
+        violation[{"msg": msg}] {
+          input.review.kind.kind == "DestinationRule"
+          not input.review.object.spec.trafficPolicy.tls.mode == "ISTIO_MUTUAL"
+          msg := sprintf("DestinationRule %v must enforce ISTIO_MUTUAL", [input.review.object.metadata.name])
+        }

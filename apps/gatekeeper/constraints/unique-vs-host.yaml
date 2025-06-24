@@ -1,0 +1,9 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: UniqueVirtualServiceHost
+metadata:
+  name: prevent-vs-host-collision
+spec:
+  match:
+    kinds:
+      - apiGroups: ["networking.istio.io"]
+        kinds: ["VirtualService"]

@@ -1,0 +1,17 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: helloworld-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/your-org/secure-service-mesh.git
+    path: apps/sample-apps/helloworld
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: secure-apps
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
