@@ -9,7 +9,7 @@ spec:
   project: default
   source:
     repoURL: git@github.com:shackdan/secure-cluster.git
-    path: apps/opa-extension
+    path: manifests/opa-extension
     directory:
       recurse: true
   destination:
