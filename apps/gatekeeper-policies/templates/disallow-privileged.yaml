@@ -22,14 +22,20 @@ spec:
       rego: |
         package k8spspprivilegedcontainer
 
+        ns_in_exempt {
+          some i
+          input.parameters.exemptNamespaces[i] == input.review.object.metadata.namespace
+        }
+        
         violation[{"msg": msg}] {
           input.review.kind.kind == "Pod"
-          ns := input.review.object.metadata.namespace
-          exempt := input.parameters.exemptNamespaces
-          not ns_is_exempt
-
-          ns_is_exempt := ns == input.parameters.exemptNamespaces[_]
-
-          input.review.object.spec.containers[_].securityContext.privileged == true
+          not ns_in_exempt
+        
+          container := input.review.object.spec.containers[_]
+          container.securityContext.privileged == true
+        
           msg := sprintf("Privileged container not allowed in Pod %v", [input.review.object.metadata.name])
         }
+
+
+
