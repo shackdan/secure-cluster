@@ -4,7 +4,7 @@ metadata:
   name: gatekeeper-templates
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "2"  # Deploy after Gatekeeper base
+    argocd.argoproj.io/sync-wave: "1"  # Deploy after Gatekeeper base
 spec:
   project: default
   source:
