@@ -9,7 +9,7 @@ spec:
   crd:
     spec:
       names:
-        kind: k8srequiredprobes
+        kind: K8sRequiredProbes
       validation:
         openAPIV3Schema:
           type: object
