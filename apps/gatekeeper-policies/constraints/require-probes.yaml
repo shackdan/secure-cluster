@@ -1,5 +1,5 @@
 apiVersion: constraints.gatekeeper.sh/v1beta1
-kind: K8sRequiredProbes
+kind: k8srequiredprobes
 metadata:
   name: enforce-readiness-liveness
   annotations:
@@ -12,4 +12,7 @@ spec:
       - apiGroups: [""]
         kinds: ["Pod"]
   parameters:
-    exemptNamespaces: ["istio-system", "kube-system", "gatekeeper-system"]
+    exemptNamespaces:
+      - kube-system
+      - gatekeeper-system
+      - istio-system
