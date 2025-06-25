@@ -20,6 +20,10 @@ spec:
         value: mesh1
       - name: global.network
         value: network1
+      - name: base.enableCRDTemplates
+        value: "true"  # Ensures all CRDs are templated and applied
+      - name: base.validateGateway
+        value: "true"  # Enables gateway API CRDs if needed
   destination:
     server: https://kubernetes.default.svc
     namespace: istio-system
