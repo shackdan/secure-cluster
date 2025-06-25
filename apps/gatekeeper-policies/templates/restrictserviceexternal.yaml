@@ -15,3 +15,14 @@ spec:
               type: array
               items:
                 type: string
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8srestrictserviceexternal
+
+        violation[{"msg": msg}] {
+          input.review.kind.kind == "Service"
+          input.review.object.spec.type == type
+          type := input.parameters.types[_]
+          msg := sprintf("Service type %v is not allowed", [type])
+        }
