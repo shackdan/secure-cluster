@@ -267,6 +267,11 @@ spec:
       jqPathExpressions:
         - .metadata.annotations."gatekeeper.sh/mutation-id"
     - group: mutations.gatekeeper.sh
+      kind: Assign
+      name: inject-sec-label
+      jqPathExpressions:
+        - .metadata.annotations."gatekeeper.sh/mutation-id"
+    - group: mutations.gatekeeper.sh
       kind: AssignMetadata
       jqPathExpressions:
         - .metadata.annotations."gatekeeper.sh/mutation-id"
