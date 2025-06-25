@@ -1,0 +1,11 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: UniqueVirtualServiceHost  # Must match the Kind from ConstraintTemplate
+metadata:
+  name: unique-vs-hosts
+spec:
+  match:
+    kinds:
+      - apiGroups: ["networking.istio.io"]
+        kinds: ["VirtualService"]
+  parameters:
+    exemptNamespaces: ["istio-system", "kube-system"]

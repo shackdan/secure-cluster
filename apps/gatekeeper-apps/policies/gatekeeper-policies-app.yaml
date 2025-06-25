@@ -1,17 +1,16 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: gatekeeper-istio-policies
+  name: gatekeeper-policies
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "5"
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   project: default
   source:
-    repoURL: git@github.com:shackdan/secure-cluster.git
-    path: apps/gatekeeper
-    directory:
-      recurse: true
+    repoURL: https://your-git-repo.com/gatekeeper-policies
+    path: templates
+    targetRevision: main
   destination:
     server: https://kubernetes.default.svc
     namespace: gatekeeper-system
@@ -19,3 +18,6 @@ spec:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - ServerSideApply=true
+      - SkipDryRunOnMissingResource=true
