@@ -35,54 +35,16 @@ spec:
     - CreateNamespace=true
     - ServerSideApply=true
     - RespectIgnoreDifferences=true
-  ignoreDifferences:
-  - group: apps
-    kind: DaemonSet
-    name: istio-cni-node
-    jsonPointers:
-    - /status
-    - /metadata/generation
-    - /metadata/resourceVersion
-    - /spec/template/metadata/annotations
-    - /spec/template/spec/containers/0/env
-  - group: apps
-    kind: DaemonSet
-    name: istio-cni-node
-    jqPathExpressions:
-    - '.status'
-    - '.spec.template.spec.containers[]?.env[]? | select(.name == "NODE_NAME")'
-    - '.spec.template.spec.initContainers[]?.env[]? | select(.name == "NODE_NAME")'
-  - group: rbac.authorization.k8s.io
-    kind: ClusterRole
-    name: istio-cni
-    jsonPointers:
-    - /metadata/resourceVersion
-    - /metadata/generation
-    - /rules
-  - group: rbac.authorization.k8s.io
-    kind: ClusterRole
-    name: istio-cni-repair-role
-    jsonPointers:
-    - /metadata/resourceVersion
-    - /metadata/generation
-    - /rules
-  - group: rbac.authorization.k8s.io
-    kind: ClusterRoleBinding
-    name: istio-cni
-    jsonPointers:
-    - /metadata/resourceVersion
-    - /metadata/generation
-  - group: admissionregistration.k8s.io
-    kind: ValidatingWebhookConfiguration
-    name: istio-validator-istio-system
-    jsonPointers:
-      - /webhooks/0/failurePolicy
-      - /webhooks/0/clientConfig/caBundle
-      - /webhooks/0/namespaceSelector
-  - group: admissionregistration.k8s.io
-    kind: ValidatingWebhookConfiguration
-    name: istiod-default-validator
-    jsonPointers:
-      - /webhooks/0/clientConfig/caBundle
-      - /webhooks/0/failurePolicy
-      - /webhooks/0/admissionReviewVersions
+    ignoreDifferences:
+    - group: admissionregistration.k8s.io
+      kind: ValidatingWebhookConfiguration
+      name: istio-validator-istio-system
+      jsonPointers:
+        - /webhooks
+    - group: admissionregistration.k8s.io
+      kind: ValidatingWebhookConfiguration
+      name: istio-validator-istio-system
+      jqPathExpressions:
+        - '.webhooks[]?.clientConfig.caBundle'
+        - '.webhooks[]?.failurePolicy'
+        - '.webhooks[]?.namespaceSelector'
