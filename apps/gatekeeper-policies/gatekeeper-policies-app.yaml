@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: git@github.com:shackdan/secure-cluster.git
     targetRevision: HEAD
-    path: apps/gatekeeper-polices
+    path: apps/gatekeeper-polices/templates
     directory:
       recurse: true
   destination:
