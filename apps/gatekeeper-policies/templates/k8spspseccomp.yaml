@@ -1,0 +1,42 @@
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8spspseccomp
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sPSPSeccomp
+      validation:
+        openAPIV3Schema:
+          type: object
+          properties:
+            allowedProfiles:
+              type: array
+              items:
+                type: string
+            exemptNamespaces:
+              type: array
+              items:
+                type: string
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8spspseccomp
+
+        violation[{"msg": msg}] {
+          input.review.kind.kind == "Pod"
+          exempt := input.parameters.exemptNamespaces
+          ns := input.review.object.metadata.namespace
+          not ns == exempt[_]
+
+          profile := input.review.object.spec.securityContext.seccompProfile.type
+          not profile_allowed(profile)
+
+          msg := sprintf("Pod %v must use an allowed seccompProfile. Found: %v", [input.review.object.metadata.name, profile])
+        }
+
+        profile_allowed(profile) {
+          allowed := input.parameters.allowedProfiles
+          profile == allowed[_]
+        }
