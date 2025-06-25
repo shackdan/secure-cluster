@@ -9,7 +9,7 @@ spec:
   project: default
   source:
     repoURL: git@github.com:shackdan/secure-cluster.git
-    path: apps/gatekeeper-polices
+    path: apps/gatekeeper-policies/
     targetRevision: main
   destination:
     server: https://kubernetes.default.svc
