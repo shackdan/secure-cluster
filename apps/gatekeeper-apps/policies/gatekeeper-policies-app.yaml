@@ -8,8 +8,8 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://your-git-repo.com/gatekeeper-policies
-    path: templates
+    repoURL: git@github.com:shackdan/secure-cluster.git
+    path: apps/gatekeeper-polices
     targetRevision: main
   destination:
     server: https://kubernetes.default.svc
