@@ -28,9 +28,7 @@ spec:
           exempt := input.parameters.exemptNamespaces
           not ns_is_exempt
 
-          ns_is_exempt {
-            ns == input.parameters.exemptNamespaces[_]
-          }
+          ns_is_exempt := ns == input.parameters.exemptNamespaces[_]
 
           input.review.object.spec.containers[_].securityContext.privileged == true
           msg := sprintf("Privileged container not allowed in Pod %v", [input.review.object.metadata.name])
