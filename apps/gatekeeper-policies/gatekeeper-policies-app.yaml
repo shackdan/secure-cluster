@@ -9,10 +9,10 @@ spec:
   project: default
   source:
     repoURL: git@github.com:shackdan/secure-cluster.git
-    targetRevision: HEAD
-    path: apps/gatekeeper-polices/templates
+    path: apps/gatekeeper-policies
     directory:
       recurse: true
+    targetRevision: HEAD
   destination:
     server: https://kubernetes.default.svc
     namespace: gatekeeper-system
