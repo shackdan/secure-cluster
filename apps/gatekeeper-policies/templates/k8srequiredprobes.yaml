@@ -3,7 +3,6 @@ kind: ConstraintTemplate
 metadata:
   name: k8srequiredprobes
   annotations:
-    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
     argocd.argoproj.io/sync-wave: "0"
 spec:
   crd:
