@@ -4,6 +4,7 @@ metadata:
   name: require-istio-mtls
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/sync-wave: "5"
 spec:
   match:
     kinds:
