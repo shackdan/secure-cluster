@@ -1,7 +1,7 @@
 apiVersion: constraints.gatekeeper.sh/v1beta1
-kind: IstioMTLSRequired
+kind: K8sPSPPrivilegedContainer
 metadata:
-  name: require-istio-mtls
+  name: disallow-privileged
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
     argocd.argoproj.io/sync-wave: "1"
@@ -9,7 +9,7 @@ spec:
   enforcementAction: deny
   match:
     kinds:
-      - apiGroups: ["networking.istio.io"]
-        kinds: ["DestinationRule"]
+      - apiGroups: [""]
+        kinds: ["Pod"]
   parameters:
     exemptNamespaces: ["istio-system", "kube-system", "gatekeeper-system"]

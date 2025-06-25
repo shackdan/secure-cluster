@@ -1,0 +1,13 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sPSPHostPaths
+metadata:
+  name: deny-hostpath
+spec:
+  enforcementAction: deny
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+  parameters:
+    allowedHostPaths: []
+    exemptNamespaces: ["istio-system", "kube-system", "gatekeeper-system"]

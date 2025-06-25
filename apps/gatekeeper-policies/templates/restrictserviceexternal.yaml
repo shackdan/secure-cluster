@@ -1,0 +1,17 @@
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8srestrictserviceexternal
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sRestrictServiceExternal
+      validation:
+        openAPIV3Schema:
+          type: object
+          properties:
+            types:
+              type: array
+              items:
+                type: string

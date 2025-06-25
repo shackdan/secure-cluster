@@ -6,9 +6,10 @@ metadata:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
     argocd.argoproj.io/sync-wave: "1"
 spec:
+  enforcementAction: deny
   match:
     kinds:
       - apiGroups: ["networking.istio.io"]
         kinds: ["VirtualService"]
   parameters:
-    exemptNamespaces: ["istio-system", "kube-system"]
+    exemptNamespaces: ["istio-system", "kube-system", "gatekeeper-system"]
