@@ -25,21 +25,24 @@ spec:
         missing_probe(container, probe) = true {
           not container[probe]
         }
-
+        
         missing_probe(container, probe) = true {
           probe_fields := {field | container[probe][field]}
           count(probe_fields) == 0
         }
-
+        
+        ns_is_exempt {
+          input.review.object.metadata.namespace == input.parameters.exemptNamespaces[_]
+        }
+        
         violation[{"msg": msg}] {
           input.review.kind.kind == "Pod"
-          exempt := input.parameters.exemptNamespaces
-          ns := input.review.object.metadata.namespace
-          not ns == exempt[_]
-
+          not ns_is_exempt
+        
           container := input.review.object.spec.containers[_]
           probe := ["readinessProbe", "livenessProbe"][_]
           missing_probe(container, probe)
-
+        
           msg := sprintf("Container <%v> in Pod <%v> is missing required <%v>", [container.name, input.review.object.metadata.name, probe])
         }
+
