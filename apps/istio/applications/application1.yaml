@@ -72,3 +72,17 @@ spec:
     jsonPointers:
     - /metadata/resourceVersion
     - /metadata/generation
+  - group: admissionregistration.k8s.io
+    kind: ValidatingWebhookConfiguration
+    name: istio-validator-istio-system
+    jsonPointers:
+      - /webhooks/0/failurePolicy
+      - /webhooks/0/clientConfig/caBundle
+      - /webhooks/0/namespaceSelector
+  - group: admissionregistration.k8s.io
+    kind: ValidatingWebhookConfiguration
+    name: istiod-default-validator
+    jsonPointers:
+      - /webhooks/0/clientConfig/caBundle
+      - /webhooks/0/failurePolicy
+      - /webhooks/0/admissionReviewVersions
