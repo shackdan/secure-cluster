@@ -33,5 +33,9 @@ spec:
   ignoreDifferences:
   - group: admissionregistration.k8s.io
     kind: ValidatingAdmissionWebhook
+    name: istiod-default-validator
     jqPathExpressions:
-    - '.webhooks[]?.clientConfig.caBundle'
+    - '.webhooks[0].clientConfig.caBundle'
+    - '.webhooks[].clientConfig.caBundle'
+    - '.metadata.resourceVersion'
+    - '.metadata.generation'
