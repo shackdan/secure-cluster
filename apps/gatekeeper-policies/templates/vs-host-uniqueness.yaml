@@ -7,7 +7,6 @@ spec:
     spec:
       names:
         kind: UniqueVirtualServiceHost
-        listKind: UniqueVirtualServiceHostList
       validation:
         openAPIV3Schema:
           type: object

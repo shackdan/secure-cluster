@@ -7,7 +7,6 @@ spec:
     spec:
       names:
         kind: IstioMTLSRequired
-        listKind: IstioMTLSRequiredList
       validation:
         openAPIV3Schema:
           type: object
