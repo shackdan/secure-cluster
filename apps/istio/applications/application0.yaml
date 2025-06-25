@@ -5,7 +5,7 @@ metadata:
   name: istio-base
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "0"
+    argocd.argoproj.io/sync-wave: "0"  # Good - this ensures it syncs first
 spec:
   project: default
   source:
@@ -16,6 +16,10 @@ spec:
       parameters:
       - name: defaultRevision
         value: default
+      - name: global.meshID
+        value: mesh1
+      - name: global.network
+        value: network1
   destination:
     server: https://kubernetes.default.svc
     namespace: istio-system
@@ -26,6 +30,7 @@ spec:
     syncOptions:
     - CreateNamespace=true
     - ServerSideApply=true
+    - Replace=true  # Add this to handle CRD updates better
   ignoreDifferences:
     - group: admissionregistration.k8s.io
       kind: ValidatingWebhookConfiguration
@@ -41,4 +46,3 @@ spec:
         - /webhooks/0/clientConfig/caBundle
         - /webhooks/0/failurePolicy
         - /webhooks/0/admissionReviewVersions
-
