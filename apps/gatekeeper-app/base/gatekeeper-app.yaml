@@ -243,6 +243,7 @@ spec:
       - CreateNamespace=true
       - ServerSideApply=true
       - RespectIgnoreDifferences=true
+      - SkipDryRunOnMissingResource=true
     retry:
       limit: 5
       backoff:
@@ -275,3 +276,8 @@ spec:
       kind: AssignMetadata
       jqPathExpressions:
         - .metadata.annotations."gatekeeper.sh/mutation-id"
+    - group: apiextensions.k8s.io
+      kind: CustomResourceDefinition
+      name: assign.mutations.gatekeeper.sh
+      jsonPointers:
+        - /spec/conversion/webhook/clientConfig/caBundle
