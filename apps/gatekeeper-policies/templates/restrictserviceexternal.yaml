@@ -24,7 +24,10 @@ spec:
 
         violation[{"msg": msg}] {
           input.review.kind.kind == "Service"
-          input.review.object.spec.type == type
-          type := input.parameters.types[_]
-          msg := sprintf("Service type %v is not allowed", [type])
+          blocked_type := input.parameters.types[_]
+          input.review.object.spec.type == blocked_type
+        
+          msg := sprintf("Service type %v is not allowed", [blocked_type])
         }
+
+
