@@ -1,19 +1,25 @@
+# app-of-apps.yaml (apply this to your cluster)
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: psa-secure-namespace
+  name: gatekeeper-policies
   namespace: argocd
-  annotations:
-    argocd.argoproj.io/sync-wave: "3"
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
     repoURL: git@github.com:shackdan/secure-cluster.git
-    path: manifests/psa
+    path: manifests/gatekeeper-policies
+    directory:
+      recurse: true
+    targetRevision: HEAD
   destination:
     server: https://kubernetes.default.svc
-    namespace: secure-apps
+    namespace: argocd
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
