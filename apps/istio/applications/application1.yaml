@@ -48,3 +48,10 @@ spec:
         - '.webhooks[]?.clientConfig.caBundle'
         - '.webhooks[]?.failurePolicy'
         - '.webhooks[]?.namespaceSelector'
+    - group: apps
+      kind: DaemonSet
+      name: istio-cni-node
+      namespace: istio-system
+      jqPathExpressions:
+        - .spec.template.metadata.annotations."kubectl.kubernetes.io/restartedAt"
+        - .spec.template.metadata.annotations."checksum/config"
