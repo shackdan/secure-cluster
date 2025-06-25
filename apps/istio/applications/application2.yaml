@@ -2,16 +2,24 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: istio-control-plane
+  name: istiod
   namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
   annotations:
     argocd.argoproj.io/sync-wave: "2"
 spec:
   project: default
   source:
-    repoURL: https://your-git-repo.com/your-repo.git
-    path: istio-config/control-plane
-    targetRevision: HEAD
+    repoURL: https://istio-release.storage.googleapis.com/charts
+    chart: istiod
+    targetRevision: "1.26.2"
+    helm:
+      parameters:
+      - name: pilot.cni.enabled
+        value: "true"  # This is crucial - tells istiod not to inject init containers
+      - name: pilot.cni.provider
+        value: "istio-cni"
   destination:
     server: https://kubernetes.default.svc
     namespace: istio-system
@@ -24,6 +32,6 @@ spec:
     - ServerSideApply=true
   ignoreDifferences:
   - group: admissionregistration.k8s.io
-    kind: ValidatingWebhookConfiguration
-    jsonPointers:
-    - /webhooks
+    kind: ValidatingAdmissionWebhook
+    jqPathExpressions:
+    - '.webhooks[]?.clientConfig.caBundle'

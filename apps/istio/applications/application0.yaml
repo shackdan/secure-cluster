@@ -11,7 +11,11 @@ spec:
   source:
     repoURL: https://istio-release.storage.googleapis.com/charts
     chart: base
-    targetRevision: 1.26.2
+    targetRevision: "1.26.2"
+    helm:
+      parameters:
+      - name: defaultRevision
+        value: default
   destination:
     server: https://kubernetes.default.svc
     namespace: istio-system
@@ -21,3 +25,10 @@ spec:
       selfHeal: true
     syncOptions:
     - CreateNamespace=true
+    - ServerSideApply=true
+  ignoreDifferences:
+  - group: admissionregistration.k8s.io
+    kind: ValidatingAdmissionWebhook
+    jqPathExpressions:
+    - '.webhooks[]?.clientConfig.caBundle'
+

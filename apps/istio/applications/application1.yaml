@@ -2,22 +2,38 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: istio-operator-controller
+  name: istio-cni
   namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
   project: default
   source:
     repoURL: https://istio-release.storage.googleapis.com/charts
-    chart: istio-operator
-    targetRevision: 1.25.0
+    chart: cni
+    targetRevision: "1.26.2"
+    helm:
+      parameters:
+      - name: cni.chained
+        value: "true"
+      - name: cni.excludeNamespaces[0]
+        value: kube-system
+      - name: cni.excludeNamespaces[1]
+        value: istio-system
+      # Uncomment and adjust these if your cluster uses non-standard paths
+      # - name: cni.cniBinDir
+      #   value: /opt/cni/bin
+      # - name: cni.cniConfDir
+      #   value: /etc/cni/net.d
   destination:
     server: https://kubernetes.default.svc
-    namespace: istio-operator
+    namespace: istio-system
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
     - CreateNamespace=true
+    - ServerSideApply=true

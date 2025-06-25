@@ -10,7 +10,9 @@ spec:
   project: default
   source:
     repoURL: git@github.com:shackdan/secure-cluster.git
-    path: apps/istio/applications
+    path: apps
+    directory:
+      recurse: true
     targetRevision: HEAD
   destination:
     server: https://kubernetes.default.svc
