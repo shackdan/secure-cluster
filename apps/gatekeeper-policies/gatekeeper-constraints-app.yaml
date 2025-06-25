@@ -1,15 +1,15 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: gatekeeper-policies
+  name: gatekeeper-constraints
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "1"  # Deploy after Gatekeeper base
+    argocd.argoproj.io/sync-wave: "2"  # Deploy after Gatekeeper base
 spec:
   project: default
   source:
     repoURL: git@github.com:shackdan/secure-cluster.git
-    path: apps/gatekeeper-policies
+    path: apps/gatekeeper-policies/constraints
     directory:
       recurse: true
     targetRevision: HEAD
