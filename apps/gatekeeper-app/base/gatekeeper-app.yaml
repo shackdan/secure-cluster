@@ -262,3 +262,11 @@ spec:
       jsonPointers:
         - /webhooks/0/clientConfig/caBundle
         - /webhooks/0/failurePolicy
+    - group: mutations.gatekeeper.sh
+      kind: Assign
+      jqPathExpressions:
+        - .metadata.annotations."gatekeeper.sh/mutation-id"
+    - group: mutations.gatekeeper.sh
+      kind: AssignMetadata
+      jqPathExpressions:
+        - .metadata.annotations."gatekeeper.sh/mutation-id"
