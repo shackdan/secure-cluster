@@ -7,6 +7,10 @@ spec:
     spec:
       names:
         kind: IstioMTLSRequired
+        listKind: IstioMTLSRequiredList
+      validation:
+        openAPIV3Schema:
+          type: object
   targets:
     - target: admission.k8s.gatekeeper.sh
       rego: |
@@ -14,6 +18,9 @@ spec:
 
         violation[{"msg": msg}] {
           input.review.kind.kind == "DestinationRule"
+          input.review.kind.group == "networking.istio.io"
+
           not input.review.object.spec.trafficPolicy.tls.mode == "ISTIO_MUTUAL"
+
           msg := sprintf("DestinationRule %v must enforce ISTIO_MUTUAL", [input.review.object.metadata.name])
         }
