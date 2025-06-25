@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://istio-release.storage.googleapis.com/charts
     chart: cni
-    targetRevision: "1.26.1"
+    targetRevision: "1.26.2"
     helm:
       parameters:
       - name: cni.chained
