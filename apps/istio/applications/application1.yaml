@@ -37,3 +37,8 @@ spec:
     syncOptions:
     - CreateNamespace=true
     - ServerSideApply=true
+  ignoreDifferences:
+  - group: admissionregistration.k8s.io
+    kind: ValidatingAdmissionWebhook
+    jqPathExpressions:
+    - '.webhooks[]?.clientConfig.caBundle'
