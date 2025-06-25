@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: https://open-policy-agent.github.io/gatekeeper/charts
     chart: gatekeeper
-    targetRevision: "3.17.1"
+    targetRevision: "3.19.2"
     helm:
       values: |
         replicas: 2
