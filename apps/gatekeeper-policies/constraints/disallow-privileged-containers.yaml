@@ -12,4 +12,7 @@ spec:
       - apiGroups: [""]
         kinds: ["Pod"]
   parameters:
-    exemptNamespaces: ["istio-system", "kube-system", "gatekeeper-system"]
+    exemptNamespaces:
+      - istio-system
+      - kube-system
+      - gatekeeper-system
