@@ -30,6 +30,7 @@ spec:
         pilot:
           env:
             EXTERNAL_ISTIOD: false
+            EXTERNAL_CA: false  # Added this line to use self-signed CA
             VALIDATION_WEBHOOK_CONFIG_NAME: "istio-validator-istio-system"
             # CNI-related environment variables
             ISTIO_CNI_ENABLED: "true"
@@ -252,4 +253,3 @@ spec:
         - '.webhooks[]?.failurePolicy'
         - '.webhooks[]?.namespaceSelector'
         - '.webhooks[]?.rules'
-    
