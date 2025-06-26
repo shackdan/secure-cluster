@@ -69,40 +69,25 @@ spec:
                   - enabled
           templates:
             sidecar: |
-              spec:
-                containers:
-                  - name: istio-proxy
-                    image: docker.io/istio/proxyv2:1.26.2
-                    args:
-                      - proxy
-                      - sidecar
-                      - --domain
-                      - $(POD_NAMESPACE).svc.cluster.local
-                    env:
-                      - name: POD_NAME
-                        valueFrom:
-                          fieldRef:
-                            fieldPath: metadata.name
-                      - name: POD_NAMESPACE
-                        valueFrom:
-                          fieldRef:
-                            fieldPath: metadata.namespace
-                    resources:
-                      requests:
-                        cpu: 10m
-                        memory: 40Mi
-                    securityContext:
-                      allowPrivilegeEscalation: false
-                      capabilities:
-                        drop:
-                          - ALL
-                    volumeMounts:
-                      - name: istio-envoy
-                        mountPath: /etc/istio/proxy
-                volumes:
-                  - name: istio-envoy
-                    emptyDir: {}
-                initContainers: []  # Explicitly no init containers – CNI handles setup
+              containers:
+                - name: istio-proxy
+                  image: docker.io/istio/proxyv2:1.26.2
+                  ...
+                  volumeMounts:
+                    - name: istio-envoy
+                      mountPath: /etc/istio/proxy
+                    - name: kube-api-access
+                      mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+                      readOnly: true
+              volumes:
+                - name: istio-envoy
+                  emptyDir: {}
+                - name: kube-api-access
+                  projected:
+                    sources:
+                      - serviceAccountToken:
+                          path: token
+                          expirationSeconds: 3600
         
         # Configure autoscaling to reduce HPA drift
         autoscaleEnabled: true
