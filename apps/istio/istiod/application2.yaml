@@ -142,29 +142,174 @@ spec:
           limits:
             cpu: 500m
             memory: 2048Mi
-      patches:
-        - target:
-            kind: MutatingWebhookConfiguration
-            name: istio-sidecar-injector
-          patch: |-
-            - op: add
-              path: /webhooks/0/namespaceSelector
-              value:
-                matchExpressions:
-                  - key: istio-injection
-                    operator: In
-                    values:
-                      - enabled
-        # Add PeerAuthentication patch
-        - target:
-            group: security.istio.io
-            version: v1beta1
-            kind: PeerAuthentication
-            name: default
-            namespace: istio-system
-          patch: |-
-            - op: add
-              path: /spec
-              value:
-                mtls:
-                  mode: PERMISSIVE
+    # Moved patches out of helm and to the correct level
+    patches:
+      - target:
+          kind: MutatingWebhookConfiguration
+          name: istio-sidecar-injector
+        patch: |-
+          - op: add
+            path: /webhooks/0/namespaceSelector
+            value:
+              matchExpressions:
+                - key: istio-injection
+                  operator: In
+                  values:
+                    - enabled
+      # Add PeerAuthentication patch
+      - target:
+          group: security.istio.io
+          version: v1beta1
+          kind: PeerAuthentication
+          name: default
+          namespace: istio-system
+        patch: |-
+          - op: add
+            path: /spec
+            value:
+              mtls:
+                mode: PERMISSIVE
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: istio-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: false  # Critical: Don't override dynamic updates
+    syncOptions:
+    - CreateNamespace=false  # istio-system should exist from istio-base
+    - ServerSideApply=true
+    - RespectIgnoreDifferences=true
+    - ApplyOutOfSyncOnly=true
+    retry:
+      limit: 3
+      backoff:
+        duration: 5s
+        maxDuration: 3m
+  ignoreDifferences:
+    # Deployment - ignore runtime updatesMore actions
+    - group: apps
+      kind: Deployment
+      name: istiod
+      namespace: istio-system
+      jsonPointers:
+        - /spec/replicas  # Managed by HPA
+        - /spec/template/spec/containers/0/resources
+        - /spec/template/spec/containers/0/env
+        - /spec/template/metadata/annotations
+        - /status
+    - group: apps
+      kind: Deployment
+      name: istiod
+      namespace: istio-system
+      jqPathExpressions:
+        - '.spec.template.metadata.annotations."kubectl.kubernetes.io/restartedAt"'
+        - '.spec.template.metadata.annotations."checksum/config"'
+        - '.spec.template.spec.containers[0].env[] | select(.name | test("PILOT_|ISTIOD_|EXTERNAL_|ISTIO_CNI"))'  # Added CNI env vars
+
+    # HorizontalPodAutoscaler - ignore dynamic scaling decisions
+    - group: autoscaling
+      kind: HorizontalPodAutoscaler
+      name: istiod
+      namespace: istio-system
+      jsonPointers:
+        - /spec/targetRef
+        - /spec/metrics
+        - /status
+    - group: autoscaling
+      kind: HorizontalPodAutoscaler
+      name: istiod
+      namespace: istio-system
+      jqPathExpressions:
+        - '.status.currentReplicas'
+        - '.status.desiredReplicas'
+        - '.status.currentMetrics'
+        - '.spec.behavior'
+
+    # PodDisruptionBudget - ignore dynamic availability calculations
+    - group: policy
+      kind: PodDisruptionBudget
+      name: istiod
+      namespace: istio-system
+      jsonPointers:
+        - /status
+        - /spec/selector
+    - group: policy
+      kind: PodDisruptionBudget
+      name: istiod
+      namespace: istio-system
+      jqPathExpressions:
+        - '.status.currentHealthy'
+        - '.status.desiredHealthy'
+        - '.status.disruptionsAllowed'
+
+    # Role - ignore permission updates
+    - group: rbac.authorization.k8s.io
+      kind: Role
+      name: istiod
+      namespace: istio-system
+      jsonPointers:
+        - /rules
+        - /metadata/labels
+        - /metadata/annotations
+    - group: rbac.authorization.k8s.io
+      kind: Role
+      name: istiod
+      namespace: istio-system
+      jqPathExpressions:
+        - '.rules[] | select(.verbs[] | test("watch|list|get"))'
+
+    # RoleBinding - ignore subject updates
+    - group: rbac.authorization.k8s.io
+      kind: RoleBinding
+      name: istiod
+      namespace: istio-system
+      jsonPointers:
+        - /subjects
+        - /roleRef
+        - /metadata/labels
+        - /metadata/annotations
+    - group: rbac.authorization.k8s.io
+      kind: RoleBinding
+      name: istiod
+      namespace: istio-system
+      jqPathExpressions:
+        - '.subjects[] | select(.kind == "ServiceAccount")'
+
+    # ValidatingWebhookConfiguration - ignore dynamic webhook management
+    - group: admissionregistration.k8s.io
+      kind: ValidatingWebhookConfiguration
+      name: istio-validator-istio-system
+      jsonPointers:
+        - /webhooks
+        - /metadata/labels
+        - /metadata/ownerReferences
+    - group: admissionregistration.k8s.io
+      kind: ValidatingWebhookConfiguration
+      name: istio-validator-istio-system
+      jqPathExpressions:
+        - '.webhooks[]?.clientConfig.caBundle'
+        - '.webhooks[]?.failurePolicy'
+        - '.webhooks[]?.namespaceSelector'
+        - '.webhooks[]?.rules'
+        - '.webhooks[]?.admissionReviewVersions'
+
+    # MutatingWebhookConfiguration - ignore sidecar injection webhook updates
+    - group: admissionregistration.k8s.io
+      kind: MutatingWebhookConfiguration
+      name: istio-sidecar-injector
+      namespace: istio-system
+      jsonPointers:
+        - /webhooks
+        - /metadata/labels
+        - /metadata/ownerReferences
+    - group: admissionregistration.k8s.io
+      kind: MutatingWebhookConfiguration
+      name: istio-sidecar-injector
+      namespace: istio-system
+      jqPathExpressions:
+        - '.webhooks[]?.clientConfig.caBundle'
+        - '.webhooks[]?.failurePolicy'
+        - '.webhooks[]?.namespaceSelector'
+        - '.webhooks[]?.rules'
