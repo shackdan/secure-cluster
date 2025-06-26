@@ -48,7 +48,42 @@ spec:
           templates:
             sidecar: |
               spec:
-                initContainers: []  # Empty array - no init containers
+                containers:
+                - name: istio-proxy
+                  image: auto
+                  args:
+                  - proxy
+                  - sidecar
+                  - --domain
+                  - $(POD_NAMESPACE).svc.cluster.local
+                  env:
+                  - name: POD_NAME
+                    valueFrom:
+                      fieldRef:
+                        fieldPath: metadata.name
+                  - name: POD_NAMESPACE
+                    valueFrom:
+                      fieldRef:
+                        fieldPath: metadata.namespace
+                  resources:
+                    requests:
+                      cpu: 10m
+                      memory: 40Mi
+                  securityContext:
+                    allowPrivilegeEscalation: false
+                  volumeMounts:
+                  - mountPath: /etc/istio/proxy
+                    name: istio-envoy
+                  - mountPath: /etc/istio/config
+                    name: istio-config
+                volumes:
+                - name: istio-envoy
+                  emptyDir: {}
+                - name: istio-config
+                  configMap:
+                    name: istio
+                initContainers: []  # Disable istio-init for CNI
+        
         
         # Configure autoscaling to reduce HPA drift
         autoscaleEnabled: true
