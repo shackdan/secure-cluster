@@ -16,7 +16,7 @@ spec:
     targetRevision: "1.26.2"
     helm:
       valueFiles:
-        - ../istio-config/istiod/values.yaml
+        - ../../istio-config/istiod/values.yaml
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
