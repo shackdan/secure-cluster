@@ -21,6 +21,8 @@ spec:
         value: kube-system
       - name: cni.excludeNamespaces[1]
         value: istio-system
+      - name: global.istio_cni.enabled
+        value: "true"
       # Uncomment and adjust these if your cluster uses non-standard paths
       # - name: cni.cniBinDir
       #   value: /opt/cni/bin
