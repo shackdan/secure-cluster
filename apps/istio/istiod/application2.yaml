@@ -86,9 +86,15 @@ spec:
                     volumeMounts:
                       - name: istio-envoy
                         mountPath: /etc/istio/proxy
+                      - name: istio-root-cert
+                        mountPath: /var/run/secrets/istio
+                        readOnly: true
                 volumes:
                   - name: istio-envoy
                     emptyDir: {}
+                  - name: istio-root-cert
+                    configMap:
+                      name: istio-ca-root-cert
         
         # Configure autoscaling to reduce HPA drift
         autoscaleEnabled: true
