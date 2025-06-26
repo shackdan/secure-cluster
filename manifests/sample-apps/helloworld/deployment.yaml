@@ -18,6 +18,7 @@ spec:
         sidecar.istio.io/proxyCPU: "10m"
         sidecar.istio.io/proxyMemory: "64Mi"
         seccomp.security.alpha.kubernetes.io/pod: runtime/default
+        sidecar.istio.io/rewriteAppHTTPProbers: "true"
     spec:
       securityContext:
         runAsNonRoot: true
