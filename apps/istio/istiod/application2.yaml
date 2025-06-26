@@ -33,7 +33,6 @@ spec:
           defaultConfig:
             proxyMetadata:
               ISTIO_META_CNI_ENABLED: "true"
-        
         pilot:
           env:
             EXTERNAL_ISTIOD: false
@@ -42,18 +41,39 @@ spec:
             VALIDATION_WEBHOOK_CONFIG_NAME: "istio-validator-istio-system"
             # CNI-related environment variables
             ISTIO_CNI_ENABLED: "true"
+            # Add explicit CA configuration
+            PILOT_CERT_PROVIDER: "istiod"
+            CA_ADDR: "istiod.istio-system.svc:15012"
+            # Add additional stability settings
+            PILOT_ENABLE_STATUS: "true"
+            PILOT_ENABLE_ANALYSIS: "false"
+
           service:
             ports:
+              - port: 15010
+                name: grpc-xds
+                protocol: TCP
               - port: 15012
                 name: tls-istiod
                 protocol: TCP
-          
-          # Add readiness probe configuration
+              - port: 15014
+                name: http-monitoring
+                protocol: TCP
+
+          # Updated readiness probe configuration
           readinessProbe:
             initialDelaySeconds: 15
             timeoutSeconds: 5
             periodSeconds: 10
             failureThreshold: 6
+
+          # Add liveness probe
+          livenessProbe:
+            httpGet:
+              path: /ready
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 10
         
         # Configure istiod to use local CA
         istiodRemote:
