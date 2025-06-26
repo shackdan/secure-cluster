@@ -12,8 +12,6 @@ spec:
     metadata:
       labels:
         app: helloworld
-      annotations:
-        sidecar.istio.io/inject: "enabled"
     spec:
       securityContext:
         runAsNonRoot: true
