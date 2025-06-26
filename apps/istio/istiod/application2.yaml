@@ -71,6 +71,9 @@ spec:
                       memory: 40Mi
                   securityContext:
                     allowPrivilegeEscalation: false
+                    capabilities:
+                      drop:
+                      - ALL
                   volumeMounts:
                   - mountPath: /etc/istio/proxy
                     name: istio-envoy
