@@ -14,10 +14,10 @@ spec:
         app: helloworld
       annotations:
         sidecar.istio.io/inject: "true"
-        # Explicitly specify no init containers should be injected #
+        # Explicitly specify no init containers should be injected
         sidecar.istio.io/proxyCPU: "10m"
         sidecar.istio.io/proxyMemory: "64Mi"
-        seccomp.security.alpha.kubernetes.io/pod: RuntimeDefault
+        seccomp.security.alpha.kubernetes.io/pod: "runtime/default"
     spec:
       securityContext:
         runAsNonRoot: true
