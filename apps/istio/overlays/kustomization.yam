@@ -1,0 +1,6 @@
+resources:
+  - ../../base/istiod.yaml
+
+patchesStrategicMerge:
+  - patch-mutatingwebhook.yaml
+  - patch-peerauth.yaml
