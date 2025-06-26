@@ -15,14 +15,8 @@ spec:
     repoURL: https://istio-release.storage.googleapis.com/charts
     targetRevision: 1.26.2
     helm:
-      values: |
-        global:
-          istioNamespace: istio-system
-
-        meshConfig:
-          defaultConfig:
-            proxyMetadata:
-              ISTIO_META_CNI_CONFIG: "true"
+      valueFiles:
+        - values.yaml
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
