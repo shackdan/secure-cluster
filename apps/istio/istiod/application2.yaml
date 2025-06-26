@@ -73,6 +73,11 @@ spec:
                 containers:
                   - name: istio-proxy
                     image: docker.io/istio/proxyv2:1.26.2
+                    securityContext:
+                      allowPrivilegeEscalation: false
+                      capabilities:
+                        drop:
+                          - ALL
                     volumeMounts:
                       - name: istio-envoy
                         mountPath: /etc/istio/proxy
