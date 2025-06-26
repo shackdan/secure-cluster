@@ -23,8 +23,6 @@ spec:
         runAsUser: 1001
         runAsGroup: 1001
         fsGroup: 1001
-        seccompProfile:
-          type: RuntimeDefault
       containers:
       - name: helloworld
         image: docker.io/istio/examples-helloworld-v1:latest
@@ -38,8 +36,6 @@ spec:
           capabilities:
             drop:
             - ALL
-          seccompProfile:
-            type: RuntimeDefault
           readOnlyRootFilesystem: true
         volumeMounts:
         - name: tmp
@@ -55,21 +51,17 @@ spec:
           httpGet:
             path: /hello
             port: 5000
-            scheme: HTTP
           initialDelaySeconds: 30
           periodSeconds: 10
           timeoutSeconds: 5
-          successThreshold: 1
           failureThreshold: 3
         readinessProbe:
           httpGet:
             path: /hello
             port: 5000
-            scheme: HTTP
           initialDelaySeconds: 5
           periodSeconds: 5
           timeoutSeconds: 3
-          successThreshold: 1
           failureThreshold: 3
       volumes:
       - name: tmp
