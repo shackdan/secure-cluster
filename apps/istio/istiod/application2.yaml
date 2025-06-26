@@ -45,9 +45,9 @@ spec:
           
           # Add readiness probe configuration
           readinessProbe:
-            initialDelaySeconds: 5
+            initialDelaySeconds: 15
             timeoutSeconds: 5
-            periodSeconds: 5
+            periodSeconds: 10
             failureThreshold: 6
         
         # Configure istiod to use local CA
