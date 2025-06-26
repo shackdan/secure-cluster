@@ -73,6 +73,11 @@ spec:
                 containers:
                   - name: istio-proxy
                     image: docker.io/istio/proxyv2:1.26.2
+                    args:
+                      - proxy
+                      - sidecar
+                      - --domain
+                      - $(POD_NAMESPACE).svc.cluster.local
                     securityContext:
                       allowPrivilegeEscalation: false
                       capabilities:
