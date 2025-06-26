@@ -58,8 +58,8 @@ spec:
           failureThreshold: 3
         readinessProbe:
           httpGet:
-            path: /health  # or whatever your app's health endpoint is
-            port: 8080     # your application port, not 15020
+            path: /health 
+            port: 8080     
           initialDelaySeconds: 10
           periodSeconds: 5
       volumes:
