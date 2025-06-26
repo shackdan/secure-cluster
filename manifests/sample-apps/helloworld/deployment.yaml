@@ -42,9 +42,7 @@ spec:
         volumeMounts:
         - name: tmp
           mountPath: /tmp
-        - name: istio-certs
-          mountPath: /var/run/secrets/istio
-          readOnly: true
+
         resources:
           requests:
             cpu: 10m
@@ -70,7 +68,3 @@ spec:
       volumes:
       - name: tmp
         emptyDir: {}
-      - name: istio-certs
-        secret:
-          secretName: istio-ca-secret
-          optional: true
