@@ -42,6 +42,11 @@ spec:
             VALIDATION_WEBHOOK_CONFIG_NAME: "istio-validator-istio-system"
             # CNI-related environment variables
             ISTIO_CNI_ENABLED: "true"
+          service:
+            ports:
+              - port: 15012
+                name: tls-istiod
+                protocol: TCP
           
           # Add readiness probe configuration
           readinessProbe:
