@@ -27,9 +27,9 @@ spec:
           caAddress: ""
           # Configure to use local CA
           remotePilotAddress: ""
+          # Add explicit trust domain
           trustDomain: "cluster.local"
           # Add explicit CA settings
-          pilotCertProvider: "istiod"
           jwtPolicy: "third-party-jwt"
         
         # Mesh configuration to use CNI
@@ -37,6 +37,7 @@ spec:
           defaultConfig:
             proxyMetadata:
               ISTIO_META_CNI_ENABLED: "true"
+        
         pilot:
           env:
             EXTERNAL_ISTIOD: false
@@ -45,13 +46,9 @@ spec:
             VALIDATION_WEBHOOK_CONFIG_NAME: "istio-validator-istio-system"
             # CNI-related environment variables
             ISTIO_CNI_ENABLED: "true"
-            # Add explicit CA configuration
-            PILOT_CERT_PROVIDER: "istiod"
+            # Add explicit CA configuration - only add what's not already defined
             CA_ADDR: "istiod.istio-system.svc:15012"
-            # Add additional stability settings
-            PILOT_ENABLE_STATUS: "true"
-            PILOT_ENABLE_ANALYSIS: "false"
-
+          
           service:
             ports:
               - port: 15010
@@ -63,14 +60,14 @@ spec:
               - port: 15014
                 name: http-monitoring
                 protocol: TCP
-
+          
           # Updated readiness probe configuration
           readinessProbe:
             initialDelaySeconds: 15
             timeoutSeconds: 5
             periodSeconds: 10
             failureThreshold: 6
-
+          
           # Add liveness probe
           livenessProbe:
             httpGet:
@@ -92,7 +89,7 @@ spec:
             # Ensure local CA is used
             EXTERNAL_CA: false
         
-        # Sidecar injector configuration to disable init containers
+        # Sidecar injector configuration
         sidecarInjectorWebhook:
           enableNamespacesByDefault: false
           objectSelector:
@@ -103,10 +100,6 @@ spec:
                 operator: In
                 values:
                   - enabled
-          injectionURL: ""
-          neverInjectSelector: []
-          alwaysInjectSelector: []
-          caBundle: ""  # Will be automatically populated by istiod
           templates:
             sidecar: |
               spec:
@@ -162,7 +155,7 @@ spec:
                     operator: In
                     values:
                       - enabled
-        # Add this new patch for PeerAuthentication
+        # Add PeerAuthentication patch
         - target:
             group: security.istio.io
             version: v1beta1
@@ -175,147 +168,3 @@ spec:
               value:
                 mtls:
                   mode: PERMISSIVE
-
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: istio-system
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: false  # Critical: Don't override dynamic updates
-    syncOptions:
-    - CreateNamespace=false  # istio-system should exist from istio-base
-    - ServerSideApply=true
-    - RespectIgnoreDifferences=true
-    - ApplyOutOfSyncOnly=true
-    retry:
-      limit: 3
-      backoff:
-        duration: 5s
-        maxDuration: 3m
-  ignoreDifferences:
-    # Deployment - ignore runtime updates
-    - group: apps
-      kind: Deployment
-      name: istiod
-      namespace: istio-system
-      jsonPointers:
-        - /spec/replicas  # Managed by HPA
-        - /spec/template/spec/containers/0/resources
-        - /spec/template/spec/containers/0/env
-        - /spec/template/metadata/annotations
-        - /status
-    - group: apps
-      kind: Deployment
-      name: istiod
-      namespace: istio-system
-      jqPathExpressions:
-        - '.spec.template.metadata.annotations."kubectl.kubernetes.io/restartedAt"'
-        - '.spec.template.metadata.annotations."checksum/config"'
-        - '.spec.template.spec.containers0.env[] | select(.name | test("PILOT_|ISTIOD_|EXTERNAL_|ISTIO_CNI"))'  # Added CNI env vars
-    
-    # HorizontalPodAutoscaler - ignore dynamic scaling decisions
-    - group: autoscaling
-      kind: HorizontalPodAutoscaler
-      name: istiod
-      namespace: istio-system
-      jsonPointers:
-        - /spec/targetRef
-        - /spec/metrics
-        - /status
-    - group: autoscaling
-      kind: HorizontalPodAutoscaler
-      name: istiod
-      namespace: istio-system
-      jqPathExpressions:
-        - '.status.currentReplicas'
-        - '.status.desiredReplicas'
-        - '.status.currentMetrics'
-        - '.spec.behavior'
-    
-    # PodDisruptionBudget - ignore dynamic availability calculations
-    - group: policy
-      kind: PodDisruptionBudget
-      name: istiod
-      namespace: istio-system
-      jsonPointers:
-        - /status
-        - /spec/selector
-    - group: policy
-      kind: PodDisruptionBudget
-      name: istiod
-      namespace: istio-system
-      jqPathExpressions:
-        - '.status.currentHealthy'
-        - '.status.desiredHealthy'
-        - '.status.disruptionsAllowed'
-    
-    # Role - ignore permission updates
-    - group: rbac.authorization.k8s.io
-      kind: Role
-      name: istiod
-      namespace: istio-system
-      jsonPointers:
-        - /rules
-        - /metadata/labels
-        - /metadata/annotations
-    - group: rbac.authorization.k8s.io
-      kind: Role
-      name: istiod
-      namespace: istio-system
-      jqPathExpressions:
-        - '.rules[] | select(.verbs[] | test("watch|list|get"))'
-    
-    # RoleBinding - ignore subject updates
-    - group: rbac.authorization.k8s.io
-      kind: RoleBinding
-      name: istiod
-      namespace: istio-system
-      jsonPointers:
-        - /subjects
-        - /roleRef
-        - /metadata/labels
-        - /metadata/annotations
-    - group: rbac.authorization.k8s.io
-      kind: RoleBinding
-      name: istiod
-      namespace: istio-system
-      jqPathExpressions:
-        - '.subjects[] | select(.kind == "ServiceAccount")'
-    
-    # ValidatingWebhookConfiguration - ignore dynamic webhook management
-    - group: admissionregistration.k8s.io
-      kind: ValidatingWebhookConfiguration
-      name: istio-validator-istio-system
-      jsonPointers:
-        - /webhooks
-        - /metadata/labels
-        - /metadata/ownerReferences
-    - group: admissionregistration.k8s.io
-      kind: ValidatingWebhookConfiguration
-      name: istio-validator-istio-system
-      jqPathExpressions:
-        - '.webhooks[]?.clientConfig.caBundle'
-        - '.webhooks[]?.failurePolicy'
-        - '.webhooks[]?.namespaceSelector'
-        - '.webhooks[]?.rules'
-        - '.webhooks[]?.admissionReviewVersions'
-    
-    # MutatingWebhookConfiguration - ignore sidecar injection webhook updates
-    - group: admissionregistration.k8s.io
-      kind: MutatingWebhookConfiguration
-      name: istio-sidecar-injector
-      namespace: istio-system
-      jsonPointers:
-        - /webhooks
-        - /metadata/labels
-        - /metadata/ownerReferences
-    - group: admissionregistration.k8s.io
-      kind: MutatingWebhookConfiguration
-      name: istio-sidecar-injector
-      namespace: istio-system
-      jqPathExpressions:
-        - '.webhooks[]?.clientConfig.caBundle'
-        - '.webhooks[]?.failurePolicy'
-        - '.webhooks[]?.namespaceSelector'
-        - '.webhooks[]?.rules'
