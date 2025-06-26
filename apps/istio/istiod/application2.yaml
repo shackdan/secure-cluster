@@ -42,6 +42,13 @@ spec:
             VALIDATION_WEBHOOK_CONFIG_NAME: "istio-validator-istio-system"
             # CNI-related environment variables
             ISTIO_CNI_ENABLED: "true"
+          
+          # Add readiness probe configuration
+          readinessProbe:
+            initialDelaySeconds: 5
+            timeoutSeconds: 5
+            periodSeconds: 5
+            failureThreshold: 6
         
         # Configure istiod to use local CA
         istiodRemote:
@@ -159,7 +166,7 @@ spec:
       jqPathExpressions:
         - '.spec.template.metadata.annotations."kubectl.kubernetes.io/restartedAt"'
         - '.spec.template.metadata.annotations."checksum/config"'
-        - '.spec.template.spec.containers[0].env[] | select(.name | test("PILOT_|ISTIOD_|EXTERNAL_|ISTIO_CNI"))'  # Added CNI env vars
+        - '.spec.template.spec.containers0.env[] | select(.name | test("PILOT_|ISTIOD_|EXTERNAL_|ISTIO_CNI"))'  # Added CNI env vars
     
     # HorizontalPodAutoscaler - ignore dynamic scaling decisions
     - group: autoscaling
