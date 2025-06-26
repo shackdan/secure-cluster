@@ -11,9 +11,9 @@ spec:
     namespace: istio-system
   project: default
   source:
-    chart: istiod
-    repoURL: https://istio-release.storage.googleapis.com/charts
-    targetRevision: 1.26.2
+    repoURL: git@github.com:shackdan/secure-cluster.git
+    path: istio-apps/istiod
+    targetRevision: HEAD
     helm:
       valueFiles:
         - values.yaml
