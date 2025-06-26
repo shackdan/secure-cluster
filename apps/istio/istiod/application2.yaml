@@ -50,7 +50,7 @@ spec:
               spec:
                 containers:
                 - name: istio-proxy
-                  image: auto
+                  image: docker.io/istio/proxyv2:1.26.2
                   args:
                   - proxy
                   - sidecar
