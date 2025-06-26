@@ -69,25 +69,16 @@ spec:
                   - enabled
           templates:
             sidecar: |
-              containers:
-                - name: istio-proxy
-                  image: docker.io/istio/proxyv2:1.26.2
-                  ...
-                  volumeMounts:
-                    - name: istio-envoy
-                      mountPath: /etc/istio/proxy
-                    - name: kube-api-access
-                      mountPath: /var/run/secrets/kubernetes.io/serviceaccount
-                      readOnly: true
-              volumes:
-                - name: istio-envoy
-                  emptyDir: {}
-                - name: kube-api-access
-                  projected:
-                    sources:
-                      - serviceAccountToken:
-                          path: token
-                          expirationSeconds: 3600
+              spec:
+                containers:
+                  - name: istio-proxy
+                    image: docker.io/istio/proxyv2:1.26.2
+                    volumeMounts:
+                      - name: istio-envoy
+                        mountPath: /etc/istio/proxy
+                volumes:
+                  - name: istio-envoy
+                    emptyDir: {}
         
         # Configure autoscaling to reduce HPA drift
         autoscaleEnabled: true
