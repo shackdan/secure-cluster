@@ -10,7 +10,7 @@ spec:
     namespace: argocd
   project: default
   source:
-    repoURL: https://github.com/shackdan/secure-cluster.git ##repoURL: git@github.com:shackdan/secure-cluster.git
+    repoURL: git@github.com:shackdan/secure-cluster.git
     path: istio-apps
     directory:
       recurse: true
