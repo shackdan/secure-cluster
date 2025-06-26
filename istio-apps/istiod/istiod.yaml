@@ -20,6 +20,8 @@ spec:
           defaultConfig:
             proxyMetadata:
               ISTIO_META_CNI_CONFIG: "true"
+        sidecarInjectorWebhook:
+          enabled: true
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
