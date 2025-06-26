@@ -11,7 +11,7 @@ spec:
   project: default
   source:
     repoURL: git@github.com:shackdan/secure-cluster.git
-    path: test2
+    path: istio
     directory:
       recurse: true
     targetRevision: HEAD
