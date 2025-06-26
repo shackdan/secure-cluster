@@ -57,12 +57,11 @@ spec:
           timeoutSeconds: 5
           failureThreshold: 3
         readinessProbe:
-          tcpSocket:
-            port: 5000
-          initialDelaySeconds: 60
+          httpGet:
+            path: /health  # or whatever your app's health endpoint is
+            port: 8080     # your application port, not 15020
+          initialDelaySeconds: 10
           periodSeconds: 5
-          timeoutSeconds: 3
-          failureThreshold: 3
       volumes:
       - name: tmp
         emptyDir: {}
