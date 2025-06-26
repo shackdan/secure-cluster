@@ -74,5 +74,6 @@ spec:
       - name: tmp
         emptyDir: {}
       - name: istio-certs
-        configMap:
-          name: istio-ca-root-cert
+        secret:
+          secretName: istio-ca-secret
+          optional: true
