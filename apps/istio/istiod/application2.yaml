@@ -63,6 +63,20 @@ spec:
           limits:
             cpu: 500m
             memory: 2048Mi
+      patches:
+        - target:
+            kind: MutatingWebhookConfiguration
+            name: istio-sidecar-injector
+          patch: |-
+            - op: add
+              path: /webhooks/0/namespaceSelector
+              value:
+                matchExpressions:
+                  - key: istio-injection
+                    operator: In
+                    values:
+                      - enabled
+
   destination:
     server: https://kubernetes.default.svc
     namespace: istio-system
