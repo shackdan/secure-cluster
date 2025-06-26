@@ -20,6 +20,11 @@ spec:
           istio_cni:
             enabled: true
             chained: true
+          # Configure CA properly
+          meshID: mesh1
+          network: network1
+          # Use built-in CA (default behavior)
+          caAddress: ""
         
         # Mesh configuration to use CNI
         meshConfig:
@@ -30,19 +35,10 @@ spec:
         pilot:
           env:
             EXTERNAL_ISTIOD: false
-            EXTERNAL_CA: false  # Use self-signed CA
-            CA_ADDR: ""  # Disable external CA address
+            # Remove EXTERNAL_CA entirely - let Istio use defaults
             VALIDATION_WEBHOOK_CONFIG_NAME: "istio-validator-istio-system"
             # CNI-related environment variables
             ISTIO_CNI_ENABLED: "true"
-        
-        # Explicitly configure CA settings
-        istiodRemote:
-          enabled: false
-        
-        # Configure the CA explicitly
-        ca:
-          address: ""  # Use built-in CA
         
         # Sidecar injector configuration to disable init containers
         sidecarInjectorWebhook:
