@@ -15,14 +15,41 @@ spec:
     targetRevision: "1.26.2"
     helm:
       values: |
+        # Global CNI configuration - CRITICAL for disabling init containers
+        global:
+          istio_cni:
+            enabled: true
+            chained: true
+        
+        # Mesh configuration to use CNI
+        meshConfig:
+          defaultConfig:
+            proxyMetadata:
+              ISTIO_META_CNI_ENABLED: "true"
+        
         pilot:
           env:
             EXTERNAL_ISTIOD: false
             VALIDATION_WEBHOOK_CONFIG_NAME: "istio-validator-istio-system"
+            # CNI-related environment variables
+            ISTIO_CNI_ENABLED: "true"
+        
+        # Sidecar injector configuration to disable init containers
+        sidecarInjectorWebhook:
+          enableNamespacesByDefault: false
+          objectSelector:
+            enabled: true
+          # Template override to remove init containers
+          templates:
+            sidecar: |
+              spec:
+                initContainers: []  # Empty array - no init containers
+        
         # Configure autoscaling to reduce HPA drift
         autoscaleEnabled: true
         autoscaleMin: 1
         autoscaleMax: 5
+        
         # Configure resources to reduce deployment drift
         resources:
           requests:
@@ -67,7 +94,7 @@ spec:
       jqPathExpressions:
         - '.spec.template.metadata.annotations."kubectl.kubernetes.io/restartedAt"'
         - '.spec.template.metadata.annotations."checksum/config"'
-        - '.spec.template.spec.containers[0].env[] | select(.name | test("PILOT_|ISTIOD_|EXTERNAL_"))'
+        - '.spec.template.spec.containers[0].env[] | select(.name | test("PILOT_|ISTIOD_|EXTERNAL_|ISTIO_CNI"))'  # Added CNI env vars
     
     # HorizontalPodAutoscaler - ignore dynamic scaling decisions
     - group: autoscaling
@@ -155,3 +182,22 @@ spec:
         - '.webhooks[]?.namespaceSelector'
         - '.webhooks[]?.rules'
         - '.webhooks[]?.admissionReviewVersions'
+    
+    # MutatingWebhookConfiguration - ignore sidecar injection webhook updates
+    - group: admissionregistration.k8s.io
+      kind: MutatingWebhookConfiguration
+      name: istio-sidecar-injector
+      namespace: istio-system
+      jsonPointers:
+        - /webhooks
+        - /metadata/labels
+        - /metadata/ownerReferences
+    - group: admissionregistration.k8s.io
+      kind: MutatingWebhookConfiguration
+      name: istio-sidecar-injector
+      namespace: istio-system
+      jqPathExpressions:
+        - '.webhooks[]?.clientConfig.caBundle'
+        - '.webhooks[]?.failurePolicy'
+        - '.webhooks[]?.namespaceSelector'
+        - '.webhooks[]?.rules'
