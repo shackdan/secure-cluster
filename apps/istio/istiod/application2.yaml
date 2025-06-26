@@ -49,44 +49,38 @@ spec:
             sidecar: |
               spec:
                 containers:
-                - name: istio-proxy
-                  image: docker.io/istio/proxyv2:1.26.2
-                  args:
-                  - proxy
-                  - sidecar
-                  - --domain
-                  - $(POD_NAMESPACE).svc.cluster.local
-                  env:
-                  - name: POD_NAME
-                    valueFrom:
-                      fieldRef:
-                        fieldPath: metadata.name
-                  - name: POD_NAMESPACE
-                    valueFrom:
-                      fieldRef:
-                        fieldPath: metadata.namespace
-                  resources:
-                    requests:
-                      cpu: 10m
-                      memory: 40Mi
-                  securityContext:
-                    allowPrivilegeEscalation: false
-                    capabilities:
-                      drop:
-                      - ALL
-                  volumeMounts:
-                  - mountPath: /etc/istio/proxy
-                    name: istio-envoy
-                  - mountPath: /etc/istio/config
-                    name: istio-config
+                  - name: istio-proxy
+                    image: docker.io/istio/proxyv2:1.26.2
+                    args:
+                      - proxy
+                      - sidecar
+                      - --domain
+                      - $(POD_NAMESPACE).svc.cluster.local
+                    env:
+                      - name: POD_NAME
+                        valueFrom:
+                          fieldRef:
+                            fieldPath: metadata.name
+                      - name: POD_NAMESPACE
+                        valueFrom:
+                          fieldRef:
+                            fieldPath: metadata.namespace
+                    resources:
+                      requests:
+                        cpu: 10m
+                        memory: 40Mi
+                    securityContext:
+                      allowPrivilegeEscalation: false
+                      capabilities:
+                        drop:
+                          - ALL
+                    volumeMounts:
+                      - name: istio-envoy
+                        mountPath: /etc/istio/proxy
                 volumes:
-                - name: istio-envoy
-                  emptyDir: {}
-                - name: istio-config
-                  configMap:
-                    name: istio
-                initContainers: []  # Disable istio-init for CNI
-        
+                  - name: istio-envoy
+                    emptyDir: {}
+                initContainers: []  # Explicitly no init containers – CNI handles setup
         
         # Configure autoscaling to reduce HPA drift
         autoscaleEnabled: true
