@@ -39,7 +39,12 @@ spec:
           enableNamespacesByDefault: false
           objectSelector:
             enabled: true
-          # Template override to remove init containers
+          namespaceSelector:
+            matchExpressions:
+              - key: istio-injection
+                operator: In
+                values:
+                  - enabled
           templates:
             sidecar: |
               spec:
