@@ -51,6 +51,26 @@ spec:
           limits:
             cpu: 100m
             memory: 64Mi
+        livenessProbe:
+          httpGet:
+            path: /hello
+            port: 5000
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /hello
+            port: 5000
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          successThreshold: 1
+          failureThreshold: 3
       volumes:
       - name: tmp
         emptyDir: {}
