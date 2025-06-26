@@ -30,10 +30,19 @@ spec:
         pilot:
           env:
             EXTERNAL_ISTIOD: false
-            EXTERNAL_CA: false  # Added this line to use self-signed CA
+            EXTERNAL_CA: false  # Use self-signed CA
+            CA_ADDR: ""  # Disable external CA address
             VALIDATION_WEBHOOK_CONFIG_NAME: "istio-validator-istio-system"
             # CNI-related environment variables
             ISTIO_CNI_ENABLED: "true"
+        
+        # Explicitly configure CA settings
+        istiodRemote:
+          enabled: false
+        
+        # Configure the CA explicitly
+        ca:
+          address: ""  # Use built-in CA
         
         # Sidecar injector configuration to disable init containers
         sidecarInjectorWebhook:
