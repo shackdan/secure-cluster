@@ -258,3 +258,4 @@ spec:
         - '.webhooks[]?.failurePolicy'
         - '.webhooks[]?.namespaceSelector'
         - '.webhooks[]?.rules'
+    
