@@ -11,12 +11,15 @@ spec:
     namespace: istio-system
   project: default
   source:
-    repoURL: git@github.com:shackdan/secure-cluster.git
-    path: istio-apps/istiod
-    targetRevision: HEAD
+    chart: istiod
+    repoURL: https://istio-release.storage.googleapis.com/charts
+    targetRevision: 1.26.2
     helm:
-      valueFiles:
-        - values.yaml
+      values: |
+        meshConfig:
+          defaultConfig:
+            proxyMetadata:
+              ISTIO_META_CNI_CONFIG: "true"
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
