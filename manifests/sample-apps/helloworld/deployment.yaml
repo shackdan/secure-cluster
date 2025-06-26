@@ -3,6 +3,9 @@ kind: Deployment
 metadata:
   name: helloworld
   namespace: secure-apps  # or your target namespace
+  annotations:
+    # Enable Istio's automatic health check rewriting
+    sidecar.istio.io/rewriteAppHTTPProbers: "true"
 spec:
   replicas: 1
   selector:
@@ -58,10 +61,12 @@ spec:
           failureThreshold: 3
         readinessProbe:
           httpGet:
-            path: /health 
-            port: 80  
+            path: /hello
+            port: 5000
           initialDelaySeconds: 10
           periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
       volumes:
       - name: tmp
         emptyDir: {}
