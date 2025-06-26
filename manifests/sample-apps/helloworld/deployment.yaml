@@ -24,8 +24,7 @@ spec:
         runAsGroup: 1001
         fsGroup: 1001
         seccompProfile:
-          type: Localhost
-          localhostProfile: default.json
+          type: Unconfined
       containers:
       - name: helloworld
         image: docker.io/istio/examples-helloworld-v1:latest
@@ -40,8 +39,7 @@ spec:
             drop:
             - ALL
           seccompProfile:
-            type: Localhost
-            localhostProfile: default.json
+            type: Unconfined
           readOnlyRootFilesystem: true
         volumeMounts:
         - name: tmp
