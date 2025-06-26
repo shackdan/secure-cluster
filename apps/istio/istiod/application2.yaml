@@ -20,11 +20,13 @@ spec:
           istio_cni:
             enabled: true
             chained: true
-          # Configure CA properly
+          # Configure CA properly for local/self-signed CA
           meshID: mesh1
           network: network1
-          # Use built-in CA (default behavior)
+          # Explicitly disable external CA
           caAddress: ""
+          # Configure to use local CA
+          remotePilotAddress: ""
         
         # Mesh configuration to use CNI
         meshConfig:
@@ -35,10 +37,24 @@ spec:
         pilot:
           env:
             EXTERNAL_ISTIOD: false
-            # Remove EXTERNAL_CA entirely - let Istio use defaults
+            # Explicitly set CA mode to local
+            PILOT_ENABLE_WORKLOAD_TRUST_BUNDLES: true
             VALIDATION_WEBHOOK_CONFIG_NAME: "istio-validator-istio-system"
             # CNI-related environment variables
             ISTIO_CNI_ENABLED: "true"
+        
+        # Configure istiod to use local CA
+        istiodRemote:
+          enabled: false
+        
+        # Explicitly configure local CA settings
+        ca:
+          # Use self-signed root CA
+          address: ""
+          # Configure CA signing settings
+          env:
+            # Ensure local CA is used
+            EXTERNAL_CA: false
         
         # Sidecar injector configuration to disable init containers
         sidecarInjectorWebhook:
