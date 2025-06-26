@@ -11,12 +11,18 @@ spec:
     namespace: istio-system
   project: default
   source:
-    repoURL: https://istio-release.storage.googleapis.com/charts
     chart: istiod
-    targetRevision: "1.26.2"
+    repoURL: https://istio-release.storage.googleapis.com/charts
+    targetRevision: 1.26.2
     helm:
-      valueFiles:
-        - values.yaml
+      values: |
+        global:
+          istioNamespace: istio-system
+
+        meshConfig:
+          defaultConfig:
+            proxyMetadata:
+              ISTIO_META_CNI_CONFIG: "true"
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
