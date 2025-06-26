@@ -54,16 +54,14 @@ spec:
             cpu: 100m
             memory: 64Mi
         livenessProbe:
-          httpGet:
-            path: /hello
+          tcpSocket:
             port: 5000
           initialDelaySeconds: 60
           periodSeconds: 10
           timeoutSeconds: 5
           failureThreshold: 3
         readinessProbe:
-          httpGet:
-            path: /hello
+          tcpSocket:
             port: 5000
           initialDelaySeconds: 30
           periodSeconds: 5
