@@ -27,6 +27,10 @@ spec:
           caAddress: ""
           # Configure to use local CA
           remotePilotAddress: ""
+          trustDomain: "cluster.local"
+          # Add explicit CA settings
+          pilotCertProvider: "istiod"
+          jwtPolicy: "third-party-jwt"
         
         # Mesh configuration to use CNI
         meshConfig:
@@ -99,6 +103,10 @@ spec:
                 operator: In
                 values:
                   - enabled
+          injectionURL: ""
+          neverInjectSelector: []
+          alwaysInjectSelector: []
+          caBundle: ""  # Will be automatically populated by istiod
           templates:
             sidecar: |
               spec:
@@ -154,6 +162,19 @@ spec:
                     operator: In
                     values:
                       - enabled
+        # Add this new patch for PeerAuthentication
+        - target:
+            group: security.istio.io
+            version: v1beta1
+            kind: PeerAuthentication
+            name: default
+            namespace: istio-system
+          patch: |-
+            - op: add
+              path: /spec
+              value:
+                mtls:
+                  mode: PERMISSIVE
 
   destination:
     server: https://kubernetes.default.svc
