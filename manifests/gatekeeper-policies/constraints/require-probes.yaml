@@ -13,6 +13,7 @@ spec:
         kinds: ["Pod"]
   parameters:
     exemptNamespaces:
+      - istio-system
+      - istio-operator
       - kube-system
       - gatekeeper-system
-      - istio-system

@@ -239,3 +239,7 @@ spec:
         kind: ValidatingAdmissionWebhook
         jqPathExpressions:
         - '.webhooks[]?.clientConfig.caBundle'
+
+
+        colima start --memory 8 --cpu 4
+        minikube start --memory=8192mb --cpus=4

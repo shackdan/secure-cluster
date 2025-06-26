@@ -14,4 +14,8 @@ spec:
   parameters:
     types:
       - NodePort
-    exemptNamespaces: ["istio-system", "kube-system", "gatekeeper-system"]
+    exemptNamespaces:
+      - istio-system
+      - istio-operator
+      - kube-system
+      - gatekeeper-system

@@ -14,5 +14,6 @@ spec:
   parameters:
     exemptNamespaces:
       - istio-system
+      - istio-operator
       - kube-system
       - gatekeeper-system
