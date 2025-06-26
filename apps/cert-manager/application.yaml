@@ -11,12 +11,14 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    repoURL: https://kubernetes-sigs.github.io/metrics-server/
+    repoURL: https://charts.bitnami.com/bitnami
     chart: metrics-server
-    targetRevision: 3.11.0  # or the latest stable version
+    targetRevision: 7.2.0  # or latest
     helm:
       values: |
-        args:
+        apiService:
+          create: true
+        extraArgs:
           - --kubelet-insecure-tls
           - --kubelet-preferred-address-types=InternalIP
   syncPolicy:
