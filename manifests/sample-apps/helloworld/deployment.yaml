@@ -17,13 +17,15 @@ spec:
         # Explicitly specify no init containers should be injected
         sidecar.istio.io/proxyCPU: "10m"
         sidecar.istio.io/proxyMemory: "64Mi"
-        seccomp.security.alpha.kubernetes.io/pod: "runtime/default"
+        seccomp.security.alpha.kubernetes.io/pod: runtime/default
     spec:
       securityContext:
         runAsNonRoot: true
         runAsUser: 1001
         runAsGroup: 1001
         fsGroup: 1001
+        seccompProfile:
+          type: RuntimeDefault
       containers:
       - name: helloworld
         image: docker.io/istio/examples-helloworld-v1:latest
@@ -37,6 +39,8 @@ spec:
           capabilities:
             drop:
             - ALL
+          seccompProfile:
+            type: RuntimeDefault
           readOnlyRootFilesystem: true
         volumeMounts:
         - name: tmp
