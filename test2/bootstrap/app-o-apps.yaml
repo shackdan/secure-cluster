@@ -11,7 +11,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/shackdan/secure-cluster.git
-    path: istio-apps
+    path: apps2
     directory:
       recurse: true
     targetRevision: HEAD
