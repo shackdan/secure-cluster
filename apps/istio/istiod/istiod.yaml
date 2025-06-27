@@ -23,8 +23,6 @@ spec:
           istio_cni:
             enabled: true
             chained: false  # Set to true if using chained CNI mode
-          logging:
-            level: "default:info"
         
         # CNI configuration
         cni:
