@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: helloworld
-  namespace: secure-apps  # or your target namespace
+  namespace: team-a  # or your target namespace
   annotations:
     # Enable Istio's automatic health check rewriting
     sidecar.istio.io/rewriteAppHTTPProbers: "true"

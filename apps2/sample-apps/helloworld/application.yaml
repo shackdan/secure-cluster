@@ -12,7 +12,7 @@ spec:
     path: manifests/sample-apps/helloworld
   destination:
     server: https://kubernetes.default.svc
-    namespace: secure-apps
+    namespace: team-a
   syncPolicy:
     automated:
       prune: true
