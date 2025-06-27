@@ -1,7 +1,0 @@
-global:
-  istioNamespace: istio-system
-
-meshConfig:
-  defaultConfig:
-    proxyMetadata:
-      ISTIO_META_CNI_CONFIG: "true"
