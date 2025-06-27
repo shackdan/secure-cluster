@@ -2,7 +2,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: istio-app-of-apps
+  name: app-of-apps
   namespace: argocd
 spec:
   destination:

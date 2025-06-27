@@ -9,7 +9,7 @@ spec:
   project: default
   source:
     repoURL: git@github.com:shackdan/secure-cluster.git
-    path: apps/namespace-bootstrapper
+    path: apps2/namespace-bootstrapper
     targetRevision: HEAD
     directory:
       recurse: true
